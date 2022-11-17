@@ -293,5 +293,15 @@ def read_output_predict():
 
 
 # read_output_predict()
+def read_demo_data_train():
+    df_train_demo = pd.read_csv('TrainData/Train_Demographics.csv')
+    df_train_demo = data_cleaning_demo(df_train_demo)
+    print(df_train_demo.shape)
 
+
+# read_output_predict()
+def read_demo_data_test():
+    df_test_demo = pd.read_csv('TestData/Test_Demographics.csv')
+    df_test_demo = data_cleaning_demo(df_test_demo)
+    print(df_test_demo.shape)
 
