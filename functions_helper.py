@@ -6,7 +6,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import auc, accuracy_score,f1_score,recall_score,precision_score, confusion_matrix, mean_squared_error,roc_curve, roc_auc_score
+from sklearn.metrics import classification_report,auc, accuracy_score,f1_score,recall_score,precision_score, confusion_matrix, mean_squared_error,roc_curve, roc_auc_score
 from sklearn.model_selection import cross_val_score, GridSearchCV, KFold, RandomizedSearchCV, train_test_split
 import xgboost as xgb
 
@@ -666,6 +666,95 @@ def PP_all_test_data_custom(df_test_demo,df_test_claim,df_test_policy,df_test_ve
     print(df_test_merged.shape)
     df_test_merged.to_csv('TestData/TestData_merged_all_custom.csv')
 
+def train_model():
+    df_train = pd.read_csv("TrainData/TrainData_merged_all.csv")
+    print(df_train.shape)
+    if 'Unnamed: 0' in df_train.columns:
+        df_train = df_train.drop(['Unnamed: 0'],axis=1)
+    print(df_train.columns)
+    X_train_all = df_train.drop(['ReportedFraud'], axis=1)
+    Y_train_all = df_train[['ReportedFraud']]
 
+    dictionary_metadata = {
+        "cols_model_input": X_train_all.columns.tolist()
+    }
+
+    json_object = json.dumps(dictionary_metadata, indent=4)
+    with open("data_pre_process_models/model_cols_metadata.json", "w") as outfile:
+        outfile.write(json_object)
+
+
+
+    X_train, X_test, y_train, y_test = train_test_split(X_train_all, Y_train_all,
+                                                        test_size=0.33, random_state=42,
+                                                        stratify=Y_train_all)
+
+    xgb_model = xgb.XGBClassifier()
+
+    # brute force scan for all parameters, here are the tricks
+    # usually max_depth is 6,7,8
+    # learning rate is around 0.05, but small changes may make big diff
+    # tuning min_child_weight subsample colsample_bytree can have
+    # much fun of fighting against overfit
+    # n_estimators is how many round of boosting
+    # finally, ensemble xgboost with multiple seeds may reduce variance
+    parameters = {'nthread': [4],  # when use hyperthread, xgboost may become slower
+                  'objective': ['binary:logistic'],
+                  'learning_rate': [0.05],  # so called `eta` value
+                  'max_depth': [6, 8],
+                  'min_child_weight': [11],
+                  'silent': [1],
+                  'subsample': [0.8],
+                  'colsample_bytree': [0.7],
+                  'n_estimators': [100, 200, 400],  # number of trees, change it to 1000 for better results
+                  'missing': [-999],
+                  'seed': [1337]}
+
+    clf = GridSearchCV(xgb_model, parameters, n_jobs=5,
+                       cv=3,
+                       scoring='accuracy',
+                       verbose=2, refit=True)
+
+    clf.fit(X_train, y_train)
+
+    print(" best_params_ ", clf.best_params_)
+    print(" best_score_ ", clf.best_score_)
+    final_model = clf.best_estimator_
+    print(" final_model ",final_model)
+    cols_model = X_train.columns.tolist()
+    X_test = X_test[cols_model]
+    print(X_test.shape)
+    y_preds_val = final_model.predict(X_test)
+    print("\nModel Report on validation data ")
+    print("Accuracy : %.4g" % accuracy_score(y_test, y_preds_val))
+    print("AUC Score (Train): %f" % roc_auc_score(y_test, y_preds_val))
+    print(classification_report(y_test, y_preds_val))
+
+    # feat_imp = pd.Series(final_model.feature_importances_, X_train.columns).sort_values(ascending=False)
+    # feat_imp.head(15).plot(kind='bar', title='Feature Importances')
+    # plt.ylabel('Feature Importance Score')
+
+    pickle.dump(clf, open('model_insurance_fraud.pkl', 'wb'))
+
+
+def get_preds(df_predict):
+    if 'VehicleAttributeDetails_VehicleModel_RSX' not in df_predict.columns:
+        df_predict['VehicleAttributeDetails_VehicleModel_RSX']=0
+    with open('data_pre_process_models/model_cols_metadata.json', 'r') as openfile:
+        # Reading from json file
+        json_object = json.load(openfile)
+        dictionary_metadata = dict(json_object)
+    cols_model_input = dictionary_metadata['cols_model_input']
+    model = pickle.load(open('model_insurance_fraud.pkl', 'rb'))
+    preds_new_data = model.predict(df_predict[cols_model_input])
+    df_predict['predictions'] = preds_new_data
+
+    return df_predict
+
+
+
+
+
+# train_model()
 # PP_all_train_data()
 # PP_all_test_data()
