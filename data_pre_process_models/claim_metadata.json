@@ -1,0 +1,37 @@
+{
+    "num_cols": [
+        "IncidentTime",
+        "NumberOfVehicles",
+        "BodilyInjuries",
+        "AmountOfTotalClaim",
+        "AmountOfInjuryClaim",
+        "AmountOfPropertyClaim",
+        "AmountOfVehicleDamage"
+    ],
+    "cat_cols": [
+        "CustomerID",
+        "TypeOfIncident",
+        "TypeOfCollission",
+        "SeverityOfIncident",
+        "AuthoritiesContacted",
+        "IncidentState",
+        "IncidentCity",
+        "PropertyDamage",
+        "Witnesses",
+        "PoliceReport"
+    ],
+    "datetime_cols": [
+        "DateOfIncident"
+    ],
+    "cat_cols_onc": [
+        "TypeOfIncident",
+        "TypeOfCollission",
+        "SeverityOfIncident",
+        "AuthoritiesContacted",
+        "IncidentState",
+        "IncidentCity",
+        "PropertyDamage",
+        "Witnesses",
+        "PoliceReport"
+    ]
+}

@@ -3,16 +3,38 @@
 <body>
  <div class="login">
 	<h1>Prediction of Insurance Fraud</h1>
-    <form action="{{ url_for('predict')}}"method="post">
+    <h2> Enter Customer ID </h2>
+    <form action="{{ url_for('predict')}}" method="post">
     	<input type="text" name="c_id" placeholder="Customer Id" required="required" /><br><br>
-
-
         <button type="submit" class="btn btn-primary btn-block btn-large">Predict</button><br>
     </form>
 
-   <br>
-   <br>
-   {{ prediction_text }}
+    <br>
+     Prediction -- {{ prediction_text }}
+
+     <h2>Upload new File</h2>
+
+    <form action="{{ url_for('upload_files')}}"  method=post enctype=multipart/form-data>
+      Demographics File upload <br> <input type=file name="demo_file">
+        {{demo_input_file_shape}}
+        <br><br>
+      Policy File upload  <br> <input type=file name="policy_file">
+        {{policy_input_file_shape}}
+        <br><br>
+
+        Cliam File upload <br>  <input type=file name="claim_file">
+        {{claim_input_file_shape}}
+        <br><br>
+
+        vehicle File upload <br>  <input type=file name="vehicle_file">
+        {{vehicle_input_file_shape}}
+        <br><br>
+
+      <button type="submit" class="btn btn-primary btn-block btn-large">Upload</button><br><br>
+
+
+    </form>
+
 
  </div>
 

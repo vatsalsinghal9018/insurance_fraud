@@ -1,0 +1,15 @@
+{
+    "num_cols": [],
+    "cat_cols": [
+        "CustomerID",
+        "VehicleAttributeDetails_VehicleMake",
+        "VehicleAttributeDetails_VehicleModel"
+    ],
+    "datetime_cols": [
+        "VehicleAttributeDetails_VehicleYOM"
+    ],
+    "cat_cols_onc": [
+        "VehicleAttributeDetails_VehicleMake",
+        "VehicleAttributeDetails_VehicleModel"
+    ]
+}

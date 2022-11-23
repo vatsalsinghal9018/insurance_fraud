@@ -1,0 +1,21 @@
+{
+    "num_cols": [
+        "InsuredAge",
+        "CapitalGains",
+        "CapitalLoss"
+    ],
+    "cat_cols": [
+        "CustomerID",
+        "InsuredGender",
+        "InsuredEducationLevel",
+        "InsuredOccupation",
+        "InsuredHobbies"
+    ],
+    "datetime_cols": [],
+    "cat_cols_onc": [
+        "InsuredGender",
+        "InsuredEducationLevel",
+        "InsuredOccupation",
+        "InsuredHobbies"
+    ]
+}

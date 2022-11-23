@@ -1,0 +1,22 @@
+{
+    "num_cols": [
+        "CustomerLoyaltyPeriod",
+        "Policy_Deductible",
+        "PolicyAnnualPremium",
+        "UmbrellaLimit"
+    ],
+    "cat_cols": [
+        "InsurancePolicyState",
+        "Policy_CombinedSingleLimit",
+        "InsuredRelationship",
+        "CustomerID"
+    ],
+    "datetime_cols": [
+        "DateOfPolicyCoverage"
+    ],
+    "cat_cols_onc": [
+        "InsurancePolicyState",
+        "Policy_CombinedSingleLimit",
+        "InsuredRelationship"
+    ]
+}

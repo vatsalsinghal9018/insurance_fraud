@@ -171,10 +171,11 @@ fetaures_to_model=['InsuredAge',
 # import streamlit as st
 from PIL import Image
 import numpy as np
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template,redirect, url_for , flash
 import pickle
 import json
 import pandas as pd
+from functions_helper import *
 
 app = Flask(__name__)
 model = pickle.load(open('model.pkl', 'rb'))
@@ -194,6 +195,41 @@ def predict():
     output=prediction
 
     return render_template('index.html', prediction_text='Prediction {}'.format(output))
+
+
+@app.route('/upload_files',methods=['POST'])
+def upload_files():
+   if request.method == 'POST':
+    # check if the post request has the file part
+    if 'demo_file' not in request.files:
+     flash('No file part')
+     return redirect(request.url)
+
+    demo_file = request.files['demo_file']
+    demo_file = pd.read_csv(demo_file)
+
+    policy_file = request.files['policy_file']
+    policy_file = pd.read_csv(policy_file)
+
+    claim_file = request.files['claim_file']
+    claim_file = pd.read_csv(claim_file)
+
+    vehicle_file = request.files['vehicle_file']
+    vehicle_file = pd.read_csv(vehicle_file)
+
+    demo_output_shape = str(demo_file.shape[0])+'-'+str(demo_file.shape[1])
+    policy_output_shape = str(policy_file.shape[0])+'-'+str(policy_file.shape[1])
+    claim_output_shape = str(claim_file.shape[0]) + '-' + str(claim_file.shape[1])
+    vehicle_output_shape = str(vehicle_file.shape[0]) + '-' + str(vehicle_file.shape[1])
+
+    PP_all_test_data_custom(demo_file,claim_file,policy_file,vehicle_file)
+
+    return render_template('index.html',
+                           demo_input_file_shape='shape {}'.format(demo_output_shape),
+                           policy_input_file_shape='shape {}'.format(policy_output_shape),
+                           claim_input_file_shape='shape {}'.format(claim_output_shape),
+                           vehicle_input_file_shape='shape {}'.format(vehicle_output_shape),
+                           )
 
 
 if __name__ == "__main__":
