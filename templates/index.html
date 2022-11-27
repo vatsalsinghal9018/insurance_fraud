@@ -10,8 +10,11 @@
     </form>
 
     <br>
-     Prediction -- {{ prediction_text }}
 
+     Prediction for the Given Customer  - {{ prediction_text }}
+     <br><br>
+     <h2> OR </h2>
+     <br>
      <h2>Upload new File</h2>
 
     <form action="{{ url_for('upload_files')}}"  method=post enctype=multipart/form-data>
@@ -32,7 +35,10 @@
 
       <button type="submit" class="btn btn-primary btn-block btn-large">Upload</button><br><br>
 
-
+        {% for table in tables %}
+            {{titles[loop.index]}}
+            {{ table|safe }}
+        {% endfor %}
     </form>
 
 

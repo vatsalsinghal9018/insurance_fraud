@@ -23,8 +23,11 @@ def predict():
     cid_data = df_cid_features.query("CustomerID==@c_id")
     prediction_df = get_preds(cid_data)
     output = prediction_df['predictions'].iloc[0]
-
-    return render_template('index.html', prediction_text='Prediction {}'.format(output))
+    if((output==1)|(output=='1')):
+        output='FRAUD'
+    else:
+        output='NOT FRAUD'
+    return render_template('index.html', prediction_text='{}'.format(output))
 
 
 @app.route('/upload_files',methods=['POST'])
@@ -59,11 +62,15 @@ def upload_files():
 
     prediction_df.to_csv("TestData/TestData_merged_all_custom_with_preds.csv")
 
+    df_to_show = prediction_df[['CustomerID', 'predictions']].head(10)
+
     return render_template('index.html',
                            demo_input_file_shape='shape {}'.format(demo_output_shape),
                            policy_input_file_shape='shape {}'.format(policy_output_shape),
                            claim_input_file_shape='shape {}'.format(claim_output_shape),
                            vehicle_input_file_shape='shape {}'.format(vehicle_output_shape),
+                           tables=[df_to_show.to_html(classes='data')],
+                           titles=df_to_show.columns.values
                            )
 
 
